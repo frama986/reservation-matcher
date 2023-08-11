@@ -5,8 +5,8 @@ import com.shackle.api.matcher.v1.MatchedReservation;
 import com.shackle.api.matcher.v1.SearchBookingRequest;
 import com.shackle.api.matcher.v1.SearchBookingResponse;
 import com.shackle.reservation.error.NotFoundException;
+import com.shackle.reservation.model.BookingEntry;
 import com.shackle.reservation.model.ReservationCollection;
-import com.shackle.reservation.model.ReservationMatcher;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
@@ -30,7 +30,7 @@ public class MatcherService implements com.shackle.api.matcher.v1.MatcherService
     }
 
     private SearchBookingResponse match(SearchBookingRequest searchBookingRequest) {
-        List<ReservationMatcher> result = reservationCollection.find(searchBookingRequest);
+        List<BookingEntry> result = reservationCollection.find(searchBookingRequest);
 
         SearchBookingResponse response;
         if(result.isEmpty()) {
@@ -50,33 +50,20 @@ public class MatcherService implements com.shackle.api.matcher.v1.MatcherService
         return response;
     }
 
-    private SearchBookingResponse buildResponse(ReservationMatcher match) {
-        return buildResponse(match, null);
+    private SearchBookingResponse buildResponse(BookingEntry bookingEntry) {
+        Reservation reservation = bookingEntry.getReservation();
+        return SearchBookingResponse.newBuilder().setReservation(
+                        MatchedReservation.newBuilder()
+                                .setConfirmationNumber(bookingEntry.getConfirmationCode())
+                                .setArrivalDate(reservation.getArrivalDate())
+                                .setDepartureDate(reservation.getDepartureDate())
+                                .setGuestDetails(reservation.getGuestDetails())
+                                .setTimestamp(reservation.getTimestamp())
+                                .build())
+                .build();
     }
 
     private SearchBookingResponse buildResponse(String message) {
-        return buildResponse(null, message);
-    }
-
-    private SearchBookingResponse buildResponse(ReservationMatcher match, String message) {
-        Reservation reservation = match.getReservation();
-
-        SearchBookingResponse.Builder builder = SearchBookingResponse.newBuilder();
-
-        if (message != null) {
-            builder.setMessage(message);
-        }
-        if (match != null) {
-            builder.setReservation(
-                    MatchedReservation.newBuilder()
-                            .setConfirmationNumber(match.getConfirmationCode())
-                            .setArrivalDate(reservation.getArrivalDate())
-                            .setDepartureDate(reservation.getDepartureDate())
-                            .setGuestDetails(reservation.getGuestDetails())
-                            .setTimestamp(reservation.getTimestamp())
-                            .build());
-        }
-
-        return builder.build();
+        return SearchBookingResponse.newBuilder().setMessage(message).build();
     }
 }

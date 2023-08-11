@@ -1,8 +1,10 @@
 package com.shackle.reservation;
 
 import com.exploreshackle.api.reservation.v1.Reservation;
+import com.exploreshackle.api.reservation.v1.ReservationService;
+import com.exploreshackle.api.reservation.v1.StreamReservationsRequest;
+import com.shackle.reservation.model.BookingEntry;
 import com.shackle.reservation.model.ReservationCollection;
-import com.shackle.reservation.model.ReservationMatcher;
 import io.quarkus.grpc.GrpcClient;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.Startup;
@@ -10,14 +12,11 @@ import io.quarkus.runtime.StartupEvent;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.subscription.Cancellable;
 import jakarta.enterprise.context.ApplicationScoped;
-import com.exploreshackle.api.reservation.v1.ReservationService;
-import com.exploreshackle.api.reservation.v1.StreamReservationsRequest;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Startup
@@ -32,17 +31,9 @@ public class ReservationLoaderService {
   @Inject
   ReservationCollection reservationCollection;
 
-  private List<ReservationMatcher> reservations;
-
-  private Cancellable reservationSubscription;
-
-  public void stopSubscription() {
-    reservationSubscription.cancel();
-  }
-
   void onStart(@Observes StartupEvent ev) {
     log.info("Loading the reservations...");
-    reservationSubscription = loadReservations();
+    loadReservations();
   }
 
   void onStop(@Observes ShutdownEvent ev) {
@@ -50,8 +41,6 @@ public class ReservationLoaderService {
   }
 
   private Cancellable loadReservations() {
-
-    reservations = new LinkedList<>();
 
     Multi<Reservation> reservationStream = reservationServiceClient
             .streamReservations(StreamReservationsRequest.newBuilder().build());
@@ -63,7 +52,7 @@ public class ReservationLoaderService {
     );
   }
 
-  public List<ReservationMatcher> getReservations() {
+  public List<BookingEntry> getReservations() {
     return reservationCollection.getList();
   }
 }

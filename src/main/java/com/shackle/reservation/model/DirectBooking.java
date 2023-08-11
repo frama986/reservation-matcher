@@ -1,35 +1,17 @@
 package com.shackle.reservation.model;
 
 import com.exploreshackle.api.reservation.v1.Reservation;
-import com.shackle.api.matcher.v1.SearchBookingRequest;
 import lombok.ToString;
 
 @ToString
-public class DirectBooking implements ReservationMatcher {
+public class DirectBooking extends BookingEntry {
 
-    private final Reservation reservation;
-
-    public DirectBooking(Reservation reservation) {
-        this.reservation = reservation;
-    }
-
-    @Override
-    public boolean match(SearchBookingRequest searchBookingRequest) {
-        return getConfirmationCode().equals(searchBookingRequest.getConfirmationNumber());
-    }
-
-    @Override
-    public Reservation getReservation() {
-        return reservation;
+    DirectBooking(Reservation reservation) {
+        super(reservation);
     }
 
     @Override
     public String getConfirmationCode() {
-        return reservation.getBookingConfirmationNumber();
-    }
-
-    @Override
-    public long getInternalId() {
-        return reservation.getInternalId();
+        return getReservation().getBookingConfirmationNumber();
     }
 }

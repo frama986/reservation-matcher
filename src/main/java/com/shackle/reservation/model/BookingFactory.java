@@ -6,7 +6,7 @@ public class BookingFactory {
 
     private BookingFactory(){}
 
-    public static ReservationMatcher booking(Reservation reservation) {
+    public static final BookingEntry newBookingEntry(Reservation reservation) {
         if(! reservation.getWebConfirmationCode().isBlank()) {
             return new OnlineBooking(reservation);
         }
