@@ -1,6 +1,8 @@
 package com.shackle.reservation;
 
 import com.exploreshackle.api.reservation.v1.Reservation;
+import com.shackle.reservation.model.ReservationCollection;
+import com.shackle.reservation.model.ReservationMatcher;
 import io.quarkus.grpc.GrpcClient;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.Startup;
@@ -11,6 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import com.exploreshackle.api.reservation.v1.ReservationService;
 import com.exploreshackle.api.reservation.v1.StreamReservationsRequest;
 import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +29,11 @@ public class ReservationLoaderService {
   @GrpcClient
   ReservationService reservationServiceClient;
 
-  private List<Reservation> reservations;
+  @Inject
+  ReservationCollection reservationCollection;
+
+  private List<ReservationMatcher> reservations;
+
   private Cancellable reservationSubscription;
 
   public void stopSubscription() {
@@ -46,16 +53,17 @@ public class ReservationLoaderService {
 
     reservations = new LinkedList<>();
 
-    Multi<Reservation> reservationStream = reservationServiceClient.streamReservations(StreamReservationsRequest.newBuilder().build());
+    Multi<Reservation> reservationStream = reservationServiceClient
+            .streamReservations(StreamReservationsRequest.newBuilder().build());
 
     return reservationStream.subscribe().with(
-            item -> reservations.add(item),
+            item -> reservationCollection.add(item),
             failure -> log.info("Reservation stream error"),
             () -> log.info("Reservation stream completed")
     );
   }
 
-  public List<Reservation> getReservations() {
-    return reservations;
+  public List<ReservationMatcher> getReservations() {
+    return reservationCollection.getList();
   }
 }

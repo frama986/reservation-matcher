@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+import "shackle/reservation/reservation_service.proto";
+
+package shackle.reservation.matcher;
+
+option java_multiple_files = true;
+option java_package = "com.shackle.api.matcher.v1";
+option java_outer_classname = "MatcherProto";
+
+
+service MatcherService {
+  rpc MatchReservation(SearchBookingRequest) returns (SearchBookingResponse);
+}
+
+message SearchBookingRequest {
+  /* The booking confirmation number */
+  string confirmation_number = 1;
+
+  /* Guest details */
+  shackle.reservation.GuestDetails guest_details = 2;
+
+  /* Arrival date */
+  shackle.reservation.LocalDate arrival_date = 3;
+  /* Departure date */
+  shackle.reservation.LocalDate departure_date = 4;
+}
+
+message SearchBookingResponse {
+  MatchedReservation reservation = 1;
+
+  string message = 2;
+}
+
+message MatchedReservation {
+  /* Timestamp the reservation was received. */
+  int64 timestamp = 1;
+
+  /* The booking confirmation number */
+  string confirmation_number = 2;
+
+  /* Guest details */
+  shackle.reservation.GuestDetails guest_details = 3;
+
+  /* Arrival date */
+  shackle.reservation.LocalDate arrival_date = 4;
+  /* Departure date */
+  shackle.reservation.LocalDate departure_date = 5;
+}

@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
+    id 'io.freefair.lombok' version '8.1.0'
 }
 
 repositories {
@@ -14,6 +15,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-reactive'
     implementation("io.quarkus:quarkus-grpc")
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.quarkus:quarkus-junit5-component'
     testImplementation 'io.rest-assured:rest-assured'
 }
 

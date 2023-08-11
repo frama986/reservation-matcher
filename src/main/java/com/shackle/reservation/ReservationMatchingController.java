@@ -1,6 +1,7 @@
 package com.shackle.reservation;
 
 import com.exploreshackle.api.reservation.v1.Reservation;
+import com.shackle.reservation.model.ReservationMatcher;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -17,7 +18,7 @@ public class ReservationMatchingController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Reservation> getList() {
+    public List<ReservationMatcher> getList() {
         return reservationLoaderService.getReservations();
     }
 }
