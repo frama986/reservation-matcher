@@ -1,10 +1,9 @@
 package com.shackle.reservation.model;
 
 import com.exploreshackle.api.reservation.v1.GuestDetails;
+import com.exploreshackle.api.reservation.v1.LocalDate;
 import com.exploreshackle.api.reservation.v1.Reservation;
 import com.shackle.api.matcher.v1.SearchBookingRequest;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -23,7 +22,11 @@ public abstract class BookingEntry {
             return true;
         }
         if(compareGuestDetails(searchBookingRequest.getGuestDetails())) {
-            return true;
+            if (searchBookingRequest.hasArrivalDate() && searchBookingRequest.hasDepartureDate()) {
+                return compareDates(searchBookingRequest.getArrivalDate(), searchBookingRequest.getDepartureDate());
+            } else {
+                return true;
+            }
         }
         return false;
     }
@@ -44,5 +47,17 @@ public abstract class BookingEntry {
         return guestDetails.getEmail().equals(other.getEmail()) ||
                 guestDetails.getPhoneNumber().equals(other.getPhoneNumber()) ||
                 guestDetails.getLastName().equals(other.getLastName());
+    }
+
+    private boolean compareDates(LocalDate otherArrivalDate, LocalDate otherDepartureDate) {
+        LocalDate arrivalDate = reservation.getArrivalDate();
+        LocalDate departureDate = reservation.getDepartureDate();
+
+        return arrivalDate.getDay() == otherArrivalDate.getDay()
+                && arrivalDate.getMonth() == otherArrivalDate.getMonth()
+                && arrivalDate.getYear() == otherArrivalDate.getYear()
+                && departureDate.getDay() == otherDepartureDate.getDay()
+                && departureDate.getMonth() == otherDepartureDate.getMonth()
+                && departureDate.getYear() == otherDepartureDate.getYear();
     }
 }
