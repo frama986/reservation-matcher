@@ -3,10 +3,16 @@ package com.shackle.reservation;
 import com.exploreshackle.api.reservation.v1.GuestDetails;
 import com.exploreshackle.api.reservation.v1.LocalDate;
 import com.exploreshackle.api.reservation.v1.Reservation;
+import com.shackle.reservation.model.BookingEntry;
+import com.shackle.reservation.model.BookingFactory;
 
 import java.util.List;
 
 public class ReservationGeneratorUtil {
+
+    public static BookingEntry bookingEntry(Data data) {
+        return BookingFactory.newBookingEntry(generateReservation(data));
+    }
 
     public static List<Reservation> reservations(List<Data> data) {
         return data.stream().map(d -> generateReservation(d)).toList();

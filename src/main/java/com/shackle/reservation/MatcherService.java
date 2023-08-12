@@ -10,23 +10,22 @@ import com.shackle.reservation.model.ReservationCollection;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @GrpcService
 public class MatcherService implements com.shackle.api.matcher.v1.MatcherService {
 
+    private static final Logger log = LoggerFactory.getLogger(MatcherService.class);
+
     @Inject
     ReservationCollection reservationCollection;
 
     @Override
     public Uni<SearchBookingResponse> matchReservation(SearchBookingRequest request) {
-        try {
-            return Uni.createFrom().item(match(request));
-        }
-        catch (NotFoundException e) {
-            return Uni.createFrom().failure(e);
-        }
+        return Uni.createFrom().item(match(request));
     }
 
     private SearchBookingResponse match(SearchBookingRequest searchBookingRequest) {
@@ -34,13 +33,14 @@ public class MatcherService implements com.shackle.api.matcher.v1.MatcherService
 
         SearchBookingResponse response;
         if(result.isEmpty()) {
-            // throw not found error
             throw new NotFoundException();
         } else if (result.size() == 1) {
             response = buildResponse(result.get(0));
         } else { // multiple matches
+            log.info("Multiple results");
             // we need more information to identify the exact reservation
-            if (searchBookingRequest.getArrivalDate() == null || searchBookingRequest.getDepartureDate() == null) {
+            if (! searchBookingRequest.hasArrivalDate() || ! searchBookingRequest.hasDepartureDate()) {
+                log.info("More information are required");
                 response = buildResponse("Insufficient information - Please provide the arrival date");
             }
             else {
