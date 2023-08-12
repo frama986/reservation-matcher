@@ -15,7 +15,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-reactive'
     implementation("io.quarkus:quarkus-grpc")
     testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation 'io.quarkus:quarkus-junit5-component'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
     testImplementation 'io.rest-assured:rest-assured'
 }
 
