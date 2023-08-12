@@ -10,6 +10,10 @@ import java.util.List;
 
 public class ReservationGeneratorUtil {
 
+    public static final Data JOHN_WHITE_DATA = new ReservationGeneratorUtil.Data("AWT-ERT","John", "White", "jsmith@gmail.com", "07756947311", java.time.LocalDate.of(2023, 11, 10), java.time.LocalDate.of(2023, 11, 23));
+    public static final Data MARTIN_RED_DATA = new ReservationGeneratorUtil.Data("UTR-BGT","Martin", "Red", "mred@gmail.com", "07756947322", java.time.LocalDate.of(2023, 11, 15), java.time.LocalDate.of(2023, 11, 23));
+    public static final Data CARL_BLUE_DATA = new ReservationGeneratorUtil.Data("POY-VCX", "Carl", "Blue", "cblue@gmail.com", "07756947333", java.time.LocalDate.of(2023, 12, 10), java.time.LocalDate.of(2023, 12, 23));
+
     public static BookingEntry bookingEntry(Data data) {
         return BookingFactory.newBookingEntry(generateReservation(data));
     }

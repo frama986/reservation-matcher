@@ -52,8 +52,8 @@ class MatcherServiceTest {
     public void whenMultipleResultsAndDatesAreNotProvidedThenAsksMoreInformation() throws ExecutionException, InterruptedException {
         Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class)))
                 .thenReturn(List.of(
-                        bookingEntry(new ReservationGeneratorUtil.Data("AWT-ERT","John", "White", "jsmith@gmail.com", "07756947311", LocalDate.of(2023, 11, 10), LocalDate.of(2023, 11, 23))),
-                        bookingEntry(new ReservationGeneratorUtil.Data("UTR-BGT","Martin", "Red", "mred@gmail.com", "07756947322", LocalDate.of(2023, 11, 15), LocalDate.of(2023, 11, 23)))
+                        bookingEntry(ReservationGeneratorUtil.JOHN_WHITE_DATA),
+                        bookingEntry(ReservationGeneratorUtil.MARTIN_RED_DATA)
                 ));
 
         CompletableFuture<SearchBookingResponse> response = new CompletableFuture<>();
@@ -71,8 +71,8 @@ class MatcherServiceTest {
     public void whenMultipleResultsAndDatesAreProvidedThenReturnsInsufficientInformation() throws ExecutionException, InterruptedException {
         Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class)))
                 .thenReturn(List.of(
-                        bookingEntry(new ReservationGeneratorUtil.Data("AWT-ERT","John", "White", "jsmith@gmail.com", "07756947311", LocalDate.of(2023, 11, 10), LocalDate.of(2023, 11, 23))),
-                        bookingEntry(new ReservationGeneratorUtil.Data("UTR-BGT","Martin", "Red", "mred@gmail.com", "07756947322", LocalDate.of(2023, 11, 15), LocalDate.of(2023, 11, 23)))
+                        bookingEntry(ReservationGeneratorUtil.JOHN_WHITE_DATA),
+                        bookingEntry(ReservationGeneratorUtil.MARTIN_RED_DATA)
                 ));
 
         CompletableFuture<SearchBookingResponse> response = new CompletableFuture<>();
@@ -89,9 +89,7 @@ class MatcherServiceTest {
     @Test
     public void whenResultIsUniqueThenReturnTheReservation() throws ExecutionException, InterruptedException {
         Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class)))
-                .thenReturn(Collections.singletonList(
-                        bookingEntry(new ReservationGeneratorUtil.Data("AWT-ERT","John", "White", "jsmith@gmail.com", "07756947311", LocalDate.of(2023, 11, 10), LocalDate.of(2023, 11, 23)))
-                        )
+                .thenReturn(Collections.singletonList(bookingEntry(ReservationGeneratorUtil.JOHN_WHITE_DATA))
                 );
 
         CompletableFuture<SearchBookingResponse> response = new CompletableFuture<>();
