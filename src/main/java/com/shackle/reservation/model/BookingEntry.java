@@ -40,6 +40,9 @@ public abstract class BookingEntry {
 
     private boolean compareGuestDetails(GuestDetails other) {
         GuestDetails guestDetails = reservation.getGuestDetails();
-        return false;
+
+        return guestDetails.getEmail().equals(other.getEmail()) ||
+                guestDetails.getPhoneNumber().equals(other.getPhoneNumber()) ||
+                guestDetails.getLastName().equals(other.getLastName());
     }
 }
