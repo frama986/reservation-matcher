@@ -32,18 +32,17 @@ public class MatcherService implements com.shackle.api.matcher.v1.MatcherService
         List<BookingEntry> result = reservationCollection.find(searchBookingRequest);
 
         SearchBookingResponse response;
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             throw new NotFoundException();
         } else if (result.size() == 1) {
             response = buildResponse(result.get(0));
         } else { // multiple matches
             log.info("Multiple results");
             // we need more information to identify the exact reservation
-            if (! searchBookingRequest.hasArrivalDate() || ! searchBookingRequest.hasDepartureDate()) {
+            if (!searchBookingRequest.hasArrivalDate() || !searchBookingRequest.hasDepartureDate()) {
                 log.info("More information are required");
                 response = buildResponse("Insufficient information - Please provide the arrival date");
-            }
-            else {
+            } else {
                 response = buildResponse("Insufficient information");
             }
         }

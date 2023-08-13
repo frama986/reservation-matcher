@@ -23,36 +23,36 @@ import java.util.List;
 @ApplicationScoped
 public class ReservationLoaderService {
 
-  private static final Logger log = LoggerFactory.getLogger(ReservationLoaderService.class);
+    private static final Logger log = LoggerFactory.getLogger(ReservationLoaderService.class);
 
-  @GrpcClient
-  ReservationService reservationServiceClient;
+    @GrpcClient
+    ReservationService reservationServiceClient;
 
-  @Inject
-  ReservationCollection reservationCollection;
+    @Inject
+    ReservationCollection reservationCollection;
 
-  void onStart(@Observes StartupEvent ev) {
-    log.info("Loading the reservations...");
-    loadReservations();
-  }
+    void onStart(@Observes StartupEvent ev) {
+        log.info("Loading the reservations...");
+        loadReservations();
+    }
 
-  void onStop(@Observes ShutdownEvent ev) {
-    log.info("The application is stopping...");
-  }
+    void onStop(@Observes ShutdownEvent ev) {
+        log.info("The application is stopping...");
+    }
 
-  private Cancellable loadReservations() {
+    private Cancellable loadReservations() {
 
-    Multi<Reservation> reservationStream = reservationServiceClient
-            .streamReservations(StreamReservationsRequest.newBuilder().build());
+        Multi<Reservation> reservationStream = reservationServiceClient
+                .streamReservations(StreamReservationsRequest.newBuilder().build());
 
-    return reservationStream.subscribe().with(
-            item -> reservationCollection.add(item),
-            failure -> log.info("Reservation stream error"),
-            () -> log.info("Reservation stream completed")
-    );
-  }
+        return reservationStream.subscribe().with(
+                item -> reservationCollection.add(item),
+                failure -> log.info("Reservation stream error"),
+                () -> log.info("Reservation stream completed")
+        );
+    }
 
-  public List<BookingEntry> getReservations() {
-    return reservationCollection.getList();
-  }
+    public List<BookingEntry> getReservations() {
+        return reservationCollection.getList();
+    }
 }

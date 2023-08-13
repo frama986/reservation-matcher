@@ -33,15 +33,15 @@ class MatcherServiceTest {
     ReservationCollection reservationCollection;
 
     @Test
-    public void whenResultIsEmptyThenReturnsNotFoundMessage() throws ExecutionException, InterruptedException, TimeoutException {
-        Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class)))
-                .thenReturn(Collections.emptyList());
+    public void whenResultIsEmptyThenReturnsNotFoundMessage() throws ExecutionException, InterruptedException {
+        Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class))).thenReturn(
+                Collections.emptyList());
 
         CompletableFuture<SearchBookingResponse> response = new CompletableFuture<>();
         CompletableFuture<Throwable> error = new CompletableFuture<>();
 
-        matcherServiceClient.matchReservation(SearchBookingRequest.newBuilder().build())
-                .subscribe().with(response::complete, error::complete);
+        matcherServiceClient.matchReservation(SearchBookingRequest.newBuilder().build()).subscribe().with(
+                response::complete, error::complete);
 
         Throwable throwable = error.get();
         assertInstanceOf(StatusRuntimeException.class, throwable);
@@ -51,16 +51,14 @@ class MatcherServiceTest {
     @Test
     public void whenMultipleResultsAndDatesAreNotProvidedThenAsksMoreInformation() throws ExecutionException, InterruptedException {
         Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class)))
-                .thenReturn(List.of(
-                        bookingEntry(ReservationGeneratorUtil.JOHN_WHITE_DATA),
-                        bookingEntry(ReservationGeneratorUtil.MARTIN_RED_DATA)
-                ));
+                .thenReturn(List.of(bookingEntry(ReservationGeneratorUtil.JOHN_WHITE_DATA),
+                        bookingEntry(ReservationGeneratorUtil.MARTIN_RED_DATA)));
 
         CompletableFuture<SearchBookingResponse> response = new CompletableFuture<>();
         CompletableFuture<Throwable> error = new CompletableFuture<>();
 
-        matcherServiceClient.matchReservation(SearchBookingRequest.newBuilder().build())
-                .subscribe().with(response::complete, error::complete);
+        matcherServiceClient.matchReservation(SearchBookingRequest.newBuilder().build()).subscribe().with(
+                response::complete, error::complete);
 
         SearchBookingResponse searchBookingResponse = response.get();
         assertEquals("Insufficient information - Please provide the arrival date", searchBookingResponse.getMessage());
@@ -69,17 +67,15 @@ class MatcherServiceTest {
 
     @Test
     public void whenMultipleResultsAndDatesAreProvidedThenReturnsInsufficientInformation() throws ExecutionException, InterruptedException {
-        Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class)))
-                .thenReturn(List.of(
-                        bookingEntry(ReservationGeneratorUtil.JOHN_WHITE_DATA),
-                        bookingEntry(ReservationGeneratorUtil.MARTIN_RED_DATA)
-                ));
+        Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class))).thenReturn(
+                List.of(bookingEntry(ReservationGeneratorUtil.JOHN_WHITE_DATA),
+                        bookingEntry(ReservationGeneratorUtil.MARTIN_RED_DATA)));
 
         CompletableFuture<SearchBookingResponse> response = new CompletableFuture<>();
         CompletableFuture<Throwable> error = new CompletableFuture<>();
 
-        matcherServiceClient.matchReservation(generateBookingRequestWithDates())
-                .subscribe().with(response::complete, error::complete);
+        matcherServiceClient.matchReservation(generateBookingRequestWithDates()).subscribe().with(response::complete,
+                error::complete);
 
         SearchBookingResponse searchBookingResponse = response.get();
         assertEquals("Insufficient information", searchBookingResponse.getMessage());
@@ -88,15 +84,14 @@ class MatcherServiceTest {
 
     @Test
     public void whenResultIsUniqueThenReturnTheReservation() throws ExecutionException, InterruptedException {
-        Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class)))
-                .thenReturn(Collections.singletonList(bookingEntry(ReservationGeneratorUtil.JOHN_WHITE_DATA))
-                );
+        Mockito.when(reservationCollection.find(Mockito.any(SearchBookingRequest.class))).thenReturn(
+                Collections.singletonList(bookingEntry(ReservationGeneratorUtil.JOHN_WHITE_DATA)));
 
         CompletableFuture<SearchBookingResponse> response = new CompletableFuture<>();
         CompletableFuture<Throwable> error = new CompletableFuture<>();
 
-        matcherServiceClient.matchReservation(SearchBookingRequest.newBuilder().build())
-                .subscribe().with(response::complete, error::complete);
+        matcherServiceClient.matchReservation(SearchBookingRequest.newBuilder().build()).subscribe().with(
+                response::complete, error::complete);
 
         assertEquals("AWT-ERT", response.get().getReservation().getConfirmationNumber());
     }

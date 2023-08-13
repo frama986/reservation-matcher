@@ -21,7 +21,7 @@ public abstract class BookingEntry {
         if (getConfirmationCode().equals(searchBookingRequest.getConfirmationNumber())) {
             return true;
         }
-        if(compareGuestDetails(searchBookingRequest.getGuestDetails())) {
+        if (compareGuestDetails(searchBookingRequest.getGuestDetails())) {
             if (searchBookingRequest.hasArrivalDate() && searchBookingRequest.hasDepartureDate()) {
                 return compareDates(searchBookingRequest.getArrivalDate(), searchBookingRequest.getDepartureDate());
             } else {

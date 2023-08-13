@@ -4,7 +4,7 @@ import com.shackle.reservation.ReservationGeneratorUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @QuarkusTest
 class BookingFactoryTest {
